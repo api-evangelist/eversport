@@ -1,0 +1,38 @@
+generated: '2026-07-19'
+method: searched
+source: https://helpcenter.eversportsmanager.com/what-is-the-provider-api
+summary:
+  types: [apiKey]
+  api_key_in: [header]
+  notes: >-
+    Eversports does not publish an OpenAPI/GraphQL securityScheme document, so the
+    exact header name is not machine-derivable. Access to the GraphQL Provider API
+    is credential-gated: Eversports issues per-integration provider credentials on
+    request. The legacy JSON:API REST API is a partner/aggregator integration
+    activated via backend account linkage rather than self-service keys.
+schemes:
+- name: ProviderCredentials
+  api: Eversports Provider API
+  type: apiKey
+  in: header
+  description: >-
+    Provider-issued credentials required on every GraphQL request. Credentials
+    are provisioned by Eversports (contact support@eversports.com) together with a
+    Quick Start Guide; they scope the integration to the venues/companies that
+    have activated the Provider API. Exact header name is provided with the
+    credentials and is not publicly documented.
+  provisioning: https://helpcenter.eversportsmanager.com/what-is-the-provider-api
+  contact: support@eversports.com
+  sources: [https://helpcenter.eversportsmanager.com/what-is-the-provider-api]
+- name: AggregatorLinkage
+  api: Eversports Integration API (v2)
+  type: backend-linkage
+  description: >-
+    The legacy JSON:API REST integration API (api.eversport.at/v2) is enabled by
+    Eversports linking a partner/aggregator system to a venue via the venue UUID
+    and company UUID (found under Settings > Aggregators in Eversports Manager).
+    External systems then use client-side IDs and PUT for order upserts. No
+    self-service API key is issued to the studio.
+  sources:
+  - https://helpcenter.eversportsmanager.com/activate-the-workit-api
+  - https://gist.github.com/thomasfr/e236f256a29f748b7956
