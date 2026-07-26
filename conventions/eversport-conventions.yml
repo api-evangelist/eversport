@@ -1,0 +1,58 @@
+generated: '2026-07-19'
+method: derived
+source: graphql/eversport-provider-api.graphql
+docs: https://helpcenter.eversportsmanager.com/what-is-the-provider-api
+apis:
+  provider_api:
+    protocol: GraphQL
+    endpoint: https://provider-api.eversportsmanager.io/api/graphql
+    authentication:
+      style: provider-issued credentials in a request header (see authentication/eversport-authentication.yml)
+    pagination:
+      style: relay-cursor-connections
+      request_params: [first, after]
+      response_fields:
+        connection: [edges, nodes, pageInfo]
+        page_info: [startCursor, endCursor, hasNextPage, hasPreviousPage]
+        edge: [cursor, node]
+      notes: >-
+        Every list query (activities, activityGroups, venues, teachers,
+        companies, images, participations) returns a Relay-style *Connection with
+        edges/nodes/pageInfo. Forward pagination only (first + after cursor).
+    filtering:
+      notes: >-
+        List queries accept typed filter arguments rather than a generic query
+        language, e.g. activities(venueIds, sportIds, teacherIds, roomIds,
+        activityGroupTypes, timeRange, isCancelled, isArchived, hasOnlineStream,
+        isBookableUnit, activityGroupPublicationStates).
+      time_range:
+        input: TimeRangeInput { start, end }
+    read_only: true
+    mutations: none
+    error_envelope:
+      style: graphql
+      shape: >-
+        Errors are returned in the top-level `errors[]` array with `message`,
+        `locations[]`, `path[]`, and an `extensions.code` machine code (e.g.
+        GRAPHQL_PARSE_FAILED). See errors/eversport-problem-types.yml.
+    idempotency: not-applicable (read-only API, no mutations)
+  integration_api_v2:
+    protocol: REST (JSON:API)
+    base_url: https://api.eversport.at/v2
+    media_type: application/vnd.api+json
+    spec: http://jsonapi.org/format/
+    error_envelope:
+      style: jsonapi
+      shape: top-level `errors[]` objects per jsonapi.org error format
+    idempotency:
+      mechanism: client-supplied-id-upsert
+      notes: >-
+        External systems supply client-side IDs and use PUT (not POST) to create
+        or update orders, making order writes idempotent on the client-provided
+        identifier. This is an id-based upsert convention, not an Idempotency-Key
+        header, so no canonical Idempotency pointer is emitted.
+cross_references:
+  authentication: authentication/eversport-authentication.yml
+  errors: errors/eversport-problem-types.yml
+  lifecycle: lifecycle/eversport-lifecycle.yml
+  data_model: data-model/eversport-data-model.yml

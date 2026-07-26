@@ -1,0 +1,44 @@
+generated: '2026-07-19'
+method: derived
+status: candidate
+source: graphql/eversport-provider-api.graphql
+note: >-
+  No official Eversports MCP server was found. The following is a candidate tool
+  list derived one-to-one from the read-only GraphQL Provider API query fields; it
+  is a proposal for an MCP wrapper, not a published server.
+server:
+  name: eversport
+  transport: http
+  api: Eversports Provider API
+  endpoint: https://provider-api.eversportsmanager.io/api/graphql
+tools:
+- name: list_venues
+  description: Retrieve a paginated list of venues activated for your integration.
+  source_operation: graphql/eversport-provider-api.graphql#Query.venues
+- name: get_venue
+  description: Retrieve a single venue by ID.
+  source_operation: graphql/eversport-provider-api.graphql#Query.venue
+- name: list_companies
+  description: Retrieve a paginated list of companies activated for your integration.
+  source_operation: graphql/eversport-provider-api.graphql#Query.companies
+- name: get_company
+  description: Retrieve a single company by ID.
+  source_operation: graphql/eversport-provider-api.graphql#Query.company
+- name: list_activity_groups
+  description: Retrieve a paginated list of activity groups (classes, courses, workshops, etc.) filtered by venue, sport, teacher, type, publication state, or time range.
+  source_operation: graphql/eversport-provider-api.graphql#Query.activityGroups
+- name: get_activity_group
+  description: Retrieve a single activity group by ID.
+  source_operation: graphql/eversport-provider-api.graphql#Query.activityGroup
+- name: list_activities
+  description: Retrieve a paginated list of scheduled activities filtered by venue, sport, teacher, room, type, time range, and status flags.
+  source_operation: graphql/eversport-provider-api.graphql#Query.activities
+- name: get_activity
+  description: Retrieve a single activity by ID, including its bookable window and checkout URL.
+  source_operation: graphql/eversport-provider-api.graphql#Query.activity
+- name: list_teachers
+  description: Retrieve a paginated list of teachers for activated venues.
+  source_operation: graphql/eversport-provider-api.graphql#Query.teachers
+- name: get_teacher
+  description: Retrieve a single teacher by ID.
+  source_operation: graphql/eversport-provider-api.graphql#Query.teacher

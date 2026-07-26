@@ -1,0 +1,108 @@
+generated: '2026-07-19'
+method: derived
+source: graphql/eversport-provider-api.graphql
+api: Eversports Provider API
+description: >-
+  Entity-relationship graph derived from the Provider API GraphQL schema
+  (object types and their reference fields / connections).
+entities:
+- name: Company
+  fields: [id, name, venues]
+- name: Venue
+  fields: [id, name, company, location, teachers, images]
+- name: ActivityGroup
+  fields: [id, name, description, type, sport, venue, activities, images, publicationState, bookable, limited, color, detailsPageURL]
+- name: Activity
+  fields: [id, name, activityGroup, location, participations, bookable, limited, end, hasOnlineStream, isArchived, isCancelled, detailsPageURL]
+- name: Teacher
+  fields: [id, name, description, education, gender, image]
+- name: Sport
+  fields: [id, name]
+- name: Room
+  fields: [id, name]
+- name: Location
+  fields: [name, type, street, zip, city, country, coordinates]
+- name: Participation
+  fields: [id, attended, customer]
+- name: Customer
+  fields: [id, firstName, lastName, email]
+- name: Bookable
+  fields: [bookableWindowStart, bookableWindowEnd, cancellationDeadline, checkoutURL]
+- name: Limited
+  fields: [freeSpots, totalSpots]
+- name: Image
+  fields: [url, mimeType, description]
+relationships:
+- from: Company
+  to: Venue
+  kind: has_many
+  via: venues
+- from: Venue
+  to: Company
+  kind: belongs_to
+  via: company
+- from: Venue
+  to: Teacher
+  kind: has_many
+  via: teachers
+- from: Venue
+  to: Location
+  kind: has_one
+  via: location
+- from: Venue
+  to: Image
+  kind: has_many
+  via: images
+- from: ActivityGroup
+  to: Venue
+  kind: belongs_to
+  via: venue
+- from: ActivityGroup
+  to: Sport
+  kind: belongs_to
+  via: sport
+- from: ActivityGroup
+  to: Activity
+  kind: has_many
+  via: activities
+- from: ActivityGroup
+  to: Image
+  kind: has_many
+  via: images
+- from: Activity
+  to: ActivityGroup
+  kind: belongs_to
+  via: activityGroup
+- from: Activity
+  to: Participation
+  kind: has_many
+  via: participations
+- from: Activity
+  to: Location
+  kind: has_one
+  via: location
+- from: Activity
+  to: Bookable
+  kind: has_one
+  via: bookable
+- from: Activity
+  to: Limited
+  kind: has_one
+  via: limited
+- from: Participation
+  to: Customer
+  kind: belongs_to
+  via: customer
+- from: Teacher
+  to: Image
+  kind: has_one
+  via: image
+- from: Location
+  to: Coordinates
+  kind: has_one
+  via: coordinates
+enums:
+  ActivityGroupType: [CAMP, CLASS, COURSE, EDUCATION, EVENT, OPEN_TRAINING, OTHER, RETREAT, TRAINING, WORKSHOP]
+  PublicationState: [ACTIVE, ARCHIVED, HIDDEN, VIEW_ONLY]
+  LocationType: [LOCATION_TYPE_INDOOR, LOCATION_TYPE_OUTDOOR]
+  Gender: [DIVERSE, FEMALE, MALE]

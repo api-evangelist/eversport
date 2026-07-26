@@ -1,0 +1,22 @@
+generated: '2026-07-19'
+method: searched
+source: live probes of provider hosts
+note: >-
+  No /.well-known/ discovery documents or /llms.txt were served by any Eversports
+  host. Recorded for auditability; absence is valid data.
+hosts:
+- host: https://provider-api.eversportsmanager.io
+  documents:
+  - {path: /.well-known/security.txt, status: 0}
+  - {path: /.well-known/openid-configuration, status: 0}
+  - {path: /.well-known/oauth-authorization-server, status: 0}
+  - {path: /.well-known/api-catalog, status: 0}
+  - {path: /.well-known/ai-plugin.json, status: 0}
+- host: https://api.eversport.at
+  documents:
+  - {path: /.well-known/security.txt, status: 0}
+  - {path: /llms.txt, status: 0}
+- host: https://www.eversports.com
+  documents:
+  - {path: /.well-known/security.txt, status: 410}
+  - {path: /llms.txt, status: 410}

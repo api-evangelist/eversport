@@ -1,0 +1,33 @@
+generated: '2026-07-19'
+method: derived
+source: graphql/eversport-provider-api.graphql, https://gist.github.com/thomasfr/e236f256a29f748b7956
+standards:
+- id: graphql
+  conforms: true
+  evidence: >-
+    Provider API is a GraphQL service; live introspection succeeds and returns a
+    standard __schema with a Query root type.
+  scope: Eversports Provider API
+- id: relay-cursor-connections
+  conforms: true
+  evidence: >-
+    List queries expose Relay Cursor Connections spec shapes (edges, nodes,
+    pageInfo with hasNextPage/endCursor; first/after arguments).
+  scope: Eversports Provider API
+- id: jsonapi-1.0
+  conforms: true
+  evidence: >-
+    Legacy Integration API (api.eversport.at/v2) documents application/vnd.api+json
+    and states requests/responses follow http://jsonapi.org/format/.
+  scope: Eversports Integration API (v2)
+- id: oauth2
+  conforms: false
+  evidence: No OAuth flows documented; access is via provider-issued credentials.
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: GraphQL uses its own errors[] envelope; legacy REST uses JSON:API errors[], not RFC 9457.
+- id: openapi
+  conforms: false
+  evidence: No OpenAPI document is published; the machine-readable contract is the GraphQL schema.
+# No published security/compliance certifications (SOC 2 / ISO 27001 / PCI / GDPR
+# program page) were found, so no `Compliance` pointer is emitted.

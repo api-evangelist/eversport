@@ -1,0 +1,18 @@
+generated: '2026-07-19'
+method: generated
+source: graphql/eversport-provider-api.graphql
+note: >-
+  Agent Skills generated from the Eversports Provider API GraphQL schema. Every
+  operation named below is a real GraphQL Query field verified against the live
+  introspection. The Provider API is read-only; skills cover discovery and
+  schedule-sync flows, not booking (bookings complete on the Eversports Checkout
+  via each activity's checkoutURL).
+skills:
+- file: eversport-sync-venue-schedule.md
+  name: Sync a venue's class and course schedule
+  api: graphql/eversport-provider-api.graphql
+  operations: [venues, venue, activities, activityGroups, activityGroup]
+- file: eversport-list-teachers-and-venues.md
+  name: Build a directory of venues and teachers
+  api: graphql/eversport-provider-api.graphql
+  operations: [venues, venue, teachers, teacher, companies]

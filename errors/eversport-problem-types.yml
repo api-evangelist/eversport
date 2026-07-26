@@ -1,0 +1,42 @@
+generated: '2026-07-19'
+method: derived
+source: graphql/eversport-provider-api.graphql (live error probe), https://gist.github.com/thomasfr/e236f256a29f748b7956
+format: graphql-errors
+note: >-
+  The Provider API returns errors in the standard GraphQL top-level errors[]
+  array (message, locations[], path[], extensions.code). Below are the error
+  envelope shape and the machine codes observed from live probing plus the
+  common GraphQL execution codes. The legacy Integration API (v2) instead uses
+  the JSON:API errors[] envelope per jsonapi.org.
+envelopes:
+  provider_api:
+    style: graphql
+    fields:
+      errors:
+      - message: Human-readable error description
+        locations: [{line, column}]
+        path: [field, path, to, error]
+        extensions: {code: MACHINE_CODE}
+  integration_api_v2:
+    style: jsonapi
+    media_type: application/vnd.api+json
+    fields:
+      errors:
+      - {status, title, detail}
+problems:
+- code: GRAPHQL_PARSE_FAILED
+  title: GraphQL query could not be parsed (syntax error)
+  observed: true
+  remediation: Fix query syntax before sending.
+- code: GRAPHQL_VALIDATION_FAILED
+  title: Query is syntactically valid but violates the schema (unknown field/type/argument)
+  observed: false
+  remediation: Validate the query against graphql/eversport-provider-api.graphql.
+- code: BAD_USER_INPUT
+  title: Invalid argument value supplied to a field
+  observed: false
+  remediation: Check argument types (e.g. IDs, TimeRangeInput) against the schema.
+- code: UNAUTHENTICATED
+  title: Missing or invalid provider credentials
+  observed: false
+  remediation: Supply valid Eversports provider credentials (see authentication/).

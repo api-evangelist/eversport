@@ -1,0 +1,32 @@
+generated: '2026-07-19'
+method: searched
+source: https://helpcenter.eversportsmanager.com/what-is-the-provider-api
+versioning:
+  provider_api:
+    scheme: unversioned-graphql
+    current: current
+    endpoint: https://provider-api.eversportsmanager.io/api/graphql
+    notes: >-
+      The GraphQL Provider API is served from a single unversioned endpoint;
+      evolution is expected to follow GraphQL additive/deprecation conventions
+      (field-level @deprecated) rather than URL versioning.
+  integration_api_v2:
+    scheme: uri-path
+    current: v2
+    base_url: https://api.eversport.at/v2
+usage_policy:
+  fair_use: true
+  notes: >-
+    The Provider API is offered on a fair-use basis with no published hard rate
+    limits; Eversports monitors integrations and reserves the right to restrict
+    excessive or harmful usage. It is intended for scheduled synchronisation, not
+    as a real-time application backend.
+deprecation:
+  policy_url: null
+  sunset_header: false
+  notes: No formal deprecation/sunset policy or RFC 8594 header support is documented.
+status_page: null
+sla: null
+deprecated_operations: []
+# No public status page, deprecation policy, or SLA was found, so no separate
+# StatusPage or Deprecation canonical pointers are emitted.

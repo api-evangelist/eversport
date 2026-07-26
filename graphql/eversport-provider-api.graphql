@@ -1,0 +1,464 @@
+# Eversports Provider API — GraphQL SDL
+# Generated from live introspection of https://provider-api.eversportsmanager.io/api/graphql
+
+schema {
+  query: Query
+}
+
+"""A classification into certain common categories of activities"""
+enum ActivityGroupType {
+  CAMP
+  CLASS
+  COURSE
+  EDUCATION
+  EVENT
+  OPEN_TRAINING
+  OTHER
+  RETREAT
+  TRAINING
+  WORKSHOP
+}
+
+enum Gender {
+  DIVERSE
+  FEMALE
+  MALE
+}
+
+"""An indication of whether a `Location` is indoor our outdoor"""
+enum LocationType {
+  LOCATION_TYPE_INDOOR
+  LOCATION_TYPE_OUTDOOR
+}
+
+"""A status indicating whether an `ActivityGroup` is publicly bookable, visible only, hidden or archived:
+- ACTIVE  (This ActivityGroup or the Activities it contains are active and bookable for the public)
+- VIEW_ONLY  (This ActivityGroup can not be booked publicly, but is still visible to the public)
+- HIDDEN  (This ActivityGroup is set to be hidden from the public. It might be for internal use only, not yet public or hidden after it was cancelled)
+- ARCHIVED  (This ActivityGroup is archived. It or its constituent Activities can not be booked.)
+"""
+enum PublicationState {
+  ACTIVE
+  ARCHIVED
+  HIDDEN
+  VIEW_ONLY
+}
+
+input TimeRangeInput {
+  end: DateInput
+  start: DateInput
+}
+
+"""The `Participatable` interface is shared by `Activity` and `ActivityGroup` and contains information about participating in them"""
+interface Participatable {
+  """Information on _whether_ and _how_ a `Participatable` is bookable.
+
+  If this field is `null` this `Participatable` is _not_ bookable.
+
+  If this field is _not_ `null` this `Participatable` is generally bookable.
+  Note that further restriction like a registration window or a limitation of spots can still apply."""
+  bookable: Bookable
+  detailsPageURL: URL
+  """Information on _whether_ and _how_ a `Participatable` has limited capacity.
+
+  If this field is `null` this `Participatable` is _not_ limited.
+  If this field is _not_ `null` this `Participatable` has a limited capacity."""
+  limited: Limited
+}
+
+"""An `Activity` is a single sport event happening at a specific time.
+
+  `Activities` can be individually bookable units (e.g. _Classes_) or part of a larger bookable `ActivityGroups` (e.g. _Courses_ or _Workshops_)
+  """
+type Activity implements Participatable {
+  """The `ActivityGroup` of this `Activity`"""
+  activityGroup: ActivityGroup!
+  """Information on _whether_ and _how_ this `Activity` is bookable.
+
+  If this field is `null` this `Activity` is _not_ bookable.
+  This can have multiple reasons:
+  - This `Activity` is not itself an individually _bookable unit_, but just a part of an `ActivityGroup` which has to be booked as a whole.
+  - This `Activity` is _archived_ or _cancelled_
+  - The `PublicationState` of its `ActivityGroup` is not `ACTIVE`
+
+  If this field is _not_ `null` this `Activity` is generally bookable.
+  Note that further restriction like a registration window or a limitation of spots can still apply."""
+  bookable: Bookable
+  detailsPageURL: URL
+  """The end of this `Activity` provided in the `DateOutput` format"""
+  end: DateOutput!
+  """Whether this `Activity` has an online stream"""
+  hasOnlineStream: Boolean!
+  """The universally unique identifier for this `Activity`"""
+  id: ID!
+  """Whether this `Activity` is _archived_.
+  An `Activity` can be _archived_ if the `ActivityGroup` containing it was archived or deleted as a whole or the individual `Activity` itself was deleted."""
+  isArchived: Boolean!
+  """Whether this `Activity` is cancelled"""
+  isCancelled: Boolean!
+  """Information on _whether_ and _how_ this `Activity` has limited spots for participants.
+
+  If This field is `null` this individual `Activity` is _not_ limited
+  This can have multiple reasons:
+  - This `Activity` is part of an `ActivityGroup` which is limited as a whole, like a _Course_
+  - This `Activity` allows for unlimited participants, like e.g. an online class
+
+  If this field is _not_ `null` this `Activity` has a limited number of spots for participants.
+  This can be the case for individually bookable `Activities` of e.g. a _Class_ or also for the `Activities` in an `ActivityGroup` like e.g. a _Workshop_ using [Tickets](https://help.eversportsmanager.com/ticket-system-for-workshops-courses-and-events-eversports-help-center)."""
+  limited: Limited
+  """The physical location at which this `Activity` will happen.
+
+  Note that e.g. a _Class_ "Yoga in the Park" might happen at a location different from the `Location` of the `Venue`."""
+  location: Location
+  """A name for this specific `Activity`.
+    Note that not all `Activities` have a specific name. If the name is `null` you can infer its name from the name of the `ActivityGroup`.
+
+    E.g. an `ActivityGroup` called “Morning Yoga” might have `Activities` without specific names, all `Activities` are generic “Morning Yoga” `Activities`.
+    But an `ActivityGroup` called “Beginners Course” might contain `Activities` individually named “Week 1 - Basics”, “Week 2 - Breathing”,… """
+  name: String
+  """The participations for this `Activity`"""
+  participations(after: Cursor, first: Int = 50): ParticipationConnection!
+  """The `Room` this `Activity` happens in"""
+  room: Room
+  """The start of this `Activity` provided in the `DateOutput` format"""
+  start: DateOutput!
+  """The `Teacher` teaching this `Activity`"""
+  teacher: Teacher
+}
+
+"""A _paginated_ result set of "Activity" items following the [GraphQL Cursor Connections Specification](https://relay.dev/graphql/connections.htm)"""
+type ActivityConnection {
+  """The `Edges` "Activity" items"""
+  edges: [ActivityEdge!]!
+  """The actual "Activity" items"""
+  nodes: [Activity!]!
+  """Meta-Information about the paginated result"""
+  pageInfo: PageInfo!
+}
+
+type ActivityEdge {
+  cursor: Cursor!
+  node: Activity!
+}
+
+"""An `ActivityGroup` is a group or series typically consisting of multiple `Activities`.
+
+  `ActivityGroup` can be bookable units as a whole (e.g. a _Course_) or just a series of individually bookable `Activities` (e.g. a _Class_)"""
+type ActivityGroup implements Participatable {
+  """A _paginated_ list of `Activities` of this `ActivityGroup`"""
+  activities(after: Cursor, first: Int = 50): ActivityConnection!
+  bookable: Bookable
+  """A color chosen for this `ActivityGroup` to visually group different `Activities` or `ActivityGroups` in a schedule for example."""
+  color: Color
+  """A free text describing this `ActivityGroup`"""
+  description: FormattedText!
+  detailsPageURL: URL
+  """The universally unique identifier for this `ActivityGroup`"""
+  id: ID!
+  """A _paginated_ list of `Images` of this `ActivityGroup`"""
+  images(after: Cursor, first: Int = 50): ImageConnection!
+  limited: Limited
+  """The name of this `ActivityGroup`"""
+  name: String!
+  """The `PublicationState` of this `ActivityGroup`"""
+  publicationState: PublicationState!
+  """The `Sport` of this `ActivityGroup`"""
+  sport: Sport
+  """The `ActivityGroupType` chosen for this `ActivityGroup`"""
+  type: ActivityGroupType!
+  """The `Venue` providing this `ActivityGroup`"""
+  venue: Venue!
+}
+
+"""A _paginated_ result set of "ActivityGroup" items following the [GraphQL Cursor Connections Specification](https://relay.dev/graphql/connections.htm)"""
+type ActivityGroupConnection {
+  """The `Edges` "ActivityGroup" items"""
+  edges: [ActivityGroupEdge!]!
+  """The actual "ActivityGroup" items"""
+  nodes: [ActivityGroup!]!
+  """Meta-Information about the paginated result"""
+  pageInfo: PageInfo!
+}
+
+type ActivityGroupEdge {
+  cursor: Cursor!
+  node: ActivityGroup!
+}
+
+"""A `Bookable` object contains information about the booking of an `Activity` or  `ActivityGroup`"""
+type Bookable {
+  """The latest possible time at which a booking is allowed.
+    If `bookableWindowEnd` is `null` there is no limitation.
+    This means a booking is possible until the end of the `Activity` or last `Activity` within an `ActivityGroup`."""
+  bookableWindowEnd: DateOutput
+  """The earliest possible time at which a booking is allowed.
+    If `bookableWindowStart` is `null` there is no limitation."""
+  bookableWindowStart: DateOutput
+  """The time until which a booking can be cancelled without incurring charges."""
+  cancellationDeadline: DateOutput!
+  """A URL linking to the Eversports Checkout for this item. Customers can login and choose their existing products or purchase a new product to participate."""
+  checkoutURL: URL!
+}
+
+"""A `Company` is a legal entity comprising one or more `Venues`"""
+type Company {
+  """The universally unique identifier for this `Company`"""
+  id: ID!
+  """The name of this `Company`"""
+  name: String!
+  """A _paginated_ list of `Venues` of this `Company`.
+
+    Note that only `Venues` are included, which are activated for your integration."""
+  venues(after: Cursor, first: Int = 50): VenueConnection!
+}
+
+"""A _paginated_ result set of "Company" items following the [GraphQL Cursor Connections Specification](https://relay.dev/graphql/connections.htm)"""
+type CompanyConnection {
+  """The `Edges` "Company" items"""
+  edges: [CompanyEdge!]!
+  """The actual "Company" items"""
+  nodes: [Company!]!
+  """Meta-Information about the paginated result"""
+  pageInfo: PageInfo!
+}
+
+type CompanyEdge {
+  cursor: Cursor!
+  node: Company!
+}
+
+"""A pair of decimal degrees representing a point on earths surface"""
+type Coordinates {
+  latitude: Float!
+  longitude: Float!
+}
+
+type Customer {
+  """The email address for this `Customer`"""
+  email: String
+  """The first name of this `Customer`"""
+  firstName: String!
+  """The universally unique identifier for this `Customer`"""
+  id: ID!
+  """The last name of this `Customer`"""
+  lastName: String!
+}
+
+"""A freetext possibly containing markup like lists, paragraphs, emphasis etc."""
+type FormattedText {
+  """An HTML representation of the description containing semantic HTML tags like <p>, <li> or <b> and HTML entities like &amp; to represent a & sign."""
+  html: String!
+  """A plain text representation of the formatted text using plain text characters like e.g. newline (`\n`) to replace a paragraph."""
+  plainText: String!
+}
+
+type Image {
+  """An optional description of this `Image`."""
+  description: String
+  """The type of the `Image`. E.g. `image/png`, `image/jpeg` or `image/gif`."""
+  mimeType: MimeType!
+  """A URL linking to the `Image`."""
+  url: URL!
+}
+
+"""A _paginated_ result set of "Image" items following the [GraphQL Cursor Connections Specification](https://relay.dev/graphql/connections.htm)"""
+type ImageConnection {
+  """The `Edges` "Image" items"""
+  edges: [ImageEdge!]!
+  """The actual "Image" items"""
+  nodes: [Image!]!
+  """Meta-Information about the paginated result"""
+  pageInfo: PageInfo!
+}
+
+type ImageEdge {
+  cursor: Cursor!
+  node: Image!
+}
+
+type Limited {
+  freeSpots: Int!
+  totalSpots: Int!
+}
+
+"""A physical location"""
+type Location {
+  """The name of the city of this `Location`"""
+  city: String
+  """The coordinates of this `Location`"""
+  coordinates: Coordinates
+  """The country of this `Location` represented by its 2 letter country code as defined in [ISO 3166](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes)
+
+For example "DE" or "AT"."""
+  country: String
+  """An optional name for this `Location`"""
+  name: String
+  """An street name of this `Location`"""
+  street: String
+  """Whether this `Location` is indoor or outdoor"""
+  type: LocationType!
+  """The ZIP code of this `Location`"""
+  zip: String
+}
+
+type PageInfo {
+  """The `Cursor` of the last item in this page. You can use it as the `after` input argument to retrieve the next page."""
+  endCursor: Cursor
+  """Whether there are more results after the current page"""
+  hasNextPage: Boolean!
+  """Whether there are results before the current page"""
+  hasPreviousPage: Boolean!
+  """The `Cursor` of the first item in this page. You can use it as the `before` input argument to retrieve the previous page."""
+  startCursor: Cursor
+}
+
+type Participation {
+  """Whether the person showed up either online or offline to the class."""
+  attended: Boolean!
+  """The `Customer` of this `Participation`. May be null if the `Customer` was archived or deleted."""
+  customer: Customer
+  """The universally unique identifier for this `Participation`"""
+  id: ID!
+}
+
+"""A _paginated_ result set of "Participation" items following the [GraphQL Cursor Connections Specification](https://relay.dev/graphql/connections.htm)"""
+type ParticipationConnection {
+  """The `Edges` "Participation" items"""
+  edges: [ParticipationEdge!]!
+  """The actual "Participation" items"""
+  nodes: [Participation!]!
+  """Meta-Information about the paginated result"""
+  pageInfo: PageInfo!
+}
+
+type ParticipationEdge {
+  cursor: Cursor!
+  node: Participation!
+}
+
+type Query {
+  """Retrieve a _paginated_ list of all `Activities` within your integrated `Venues`"""
+  activities(activityGroupIds: [ID!], activityGroupPublicationStates: [PublicationState!], activityGroupTypes: [ActivityGroupType!], after: Cursor, first: Int = 50, hasOnlineStream: Boolean, isArchived: Boolean = false, isBookableUnit: Boolean, isCancelled: Boolean, roomIds: [ID!], sportIds: [ID!], teacherIds: [ID!], timeRange: TimeRangeInput, venueIds: [ID!]): ActivityConnection!
+  """Retrieve a single `Activity` by its `ID`"""
+  activity(id: ID!): Activity!
+  """Retrieve a single `ActivityGroup` by its `ID`"""
+  activityGroup(id: ID!): ActivityGroup!
+  """Retrieve a _paginated_ list of all `ActivityGroups` within your integrated `Venues`"""
+  activityGroups(after: Cursor, first: Int = 50, isBookableUnit: Boolean, publicationStates: [PublicationState!], sportIds: [ID!], teacherIds: [ID!], timeRange: TimeRangeInput, types: [ActivityGroupType!], venueIds: [ID!]): ActivityGroupConnection!
+  """Retrieve a _paginated_ list of all `Companies` that are activated for your integration"""
+  companies(after: Cursor, first: Int = 50): CompanyConnection!
+  """Retrieve a single `Company` by its `ID`"""
+  company(id: ID!): Company!
+  """Retrieve a single `Teacher` by its `ID`"""
+  teacher(id: ID!): Teacher!
+  """Retrieve a _paginated_ list of all `Teachers` of  `Venues` that are activated for your integration"""
+  teachers(after: Cursor, first: Int = 50, venueIds: [ID!]): TeacherConnection!
+  """Retrieve a single `Venue` by its `ID`"""
+  venue(id: ID!): Venue!
+  """Retrieve a _paginated_ list of all `Venues` that are activated for your integration"""
+  venues(after: Cursor, first: Int = 50): VenueConnection!
+}
+
+type Room {
+  """The universally unique identifier for this `Room`"""
+  id: ID!
+  """The name of this `Room`"""
+  name: String!
+}
+
+type Sport {
+  """The universally unique identifier for this `Sport`"""
+  id: ID!
+  """The name of this `Sport`"""
+  name: String!
+}
+
+type Teacher {
+  """A descriptive text about this `Teacher`"""
+  description: FormattedText
+  """A free text about the education of this `Teacher`"""
+  education: FormattedText
+  """The gender of this `Teacher`"""
+  gender: Gender
+  """The universally unique identifier for this `Teacher`"""
+  id: ID!
+  """The profile picture of this `Teacher`"""
+  image: Image
+  """The name of this `Teacher`"""
+  name: String!
+}
+
+"""A _paginated_ result set of "Teacher" items following the [GraphQL Cursor Connections Specification](https://relay.dev/graphql/connections.htm)"""
+type TeacherConnection {
+  """The `Edges` "Teacher" items"""
+  edges: [TeacherEdge!]!
+  """The actual "Teacher" items"""
+  nodes: [Teacher!]!
+  """Meta-Information about the paginated result"""
+  pageInfo: PageInfo!
+}
+
+type TeacherEdge {
+  cursor: Cursor!
+  node: Teacher!
+}
+
+"""A `Venue` is a provider of `Activities`. This is usually a physical location like a _Studio_ or _Gym_."""
+type Venue {
+  """The `Company` this `Venue` belongs to"""
+  company: Company!
+  """The universally unique identifier for this `Venue`"""
+  id: ID!
+  """A _paginated_ list of `Images` of this `Venue`"""
+  images(after: Cursor, first: Int = 50): ImageConnection!
+  """The physical location of this `Venue`.
+
+    Note that not all `Activities` of a `Venue` are necessarily also happening at this same `Location`. E.g. a `Venue` might offer _"Yoga in the Park"_ at a different `Location` as indicated by  `Activity.location`."""
+  location: Location!
+  """The name of this `Venue`"""
+  name: String!
+  """A _paginated_ list of `Teachers` of this `Venue`"""
+  teachers(after: Cursor, first: Int = 50): TeacherConnection!
+}
+
+"""A _paginated_ result set of "Venue" items following the [GraphQL Cursor Connections Specification](https://relay.dev/graphql/connections.htm)"""
+type VenueConnection {
+  """The `Edges` "Venue" items"""
+  edges: [VenueEdge!]!
+  """The actual "Venue" items"""
+  nodes: [Venue!]!
+  """Meta-Information about the paginated result"""
+  pageInfo: PageInfo!
+}
+
+type VenueEdge {
+  cursor: Cursor!
+  node: Venue!
+}
+
+"""A hexadecimal RGB color value like "#FF0000""""
+scalar Color
+
+"""An opaque cursor for pagination"""
+scalar Cursor
+
+"""A string representing a point in time in an [ISO Format](https://en.wikipedia.org/wiki/ISO_8601)
+
+  When providing a `DateInput` argument you can choose from multiple different formats:
+  - `"yyyy-MM-dd"` for just a Date: e.g. `"2022-05-13"` will be interpreted as May 13th 2022, 00:00:00h _UTC_
+  - `"yyyy-MM-dd[T]HH:mm"` or `"yyyy-MM-dd HH:mm"` for a date with time: e.g. `"2022-05-13 15:30"` will be interpreted as May 13th 2022, 15:30:00h in our _default timezone Europe/Vienna_, which is 14:30 _UTC_
+  - `"yyyy-MM-dd[T]HH:mm:ss[Z]"` for a UTC timestamp: e.g. `"2022-05-13T15:30:00Z"` with the Z denoting zero UTC offset will be interpreted as May 13th 2022, 15:30:00h _UTC_
+  - `"yyyy-MM-dd[T]HH:mm:ss[±]hh:mm"` for a timestamp with an arbitrary UTC offset: e.g. `"2022-05-13T15:30:00+03:00"` for 15:30 Djibouti time (with a 03:00h UTC offset) will be interpreted as May 13th 2022, 15:30:00h _Djibouti time_, which is 12:30 _UTC_"""
+scalar DateInput
+
+"""A string representing a specific point in time in the [ISO Format](https://en.wikipedia.org/wiki/ISO_8601) `"yyyy-MM-dd[T]HH:mm:ss[±]hh:mm"` containing the information in which timezone this date is happening.
+
+  For example `"2022-03-15T20:15:00+01:00"` would denote the _15th of March 2022, 20:15:00 local time in a timezone offset by 1 hour from UTC_. (e.g. Vienna)"""
+scalar DateOutput
+
+"""A file type descriptor. See [Image Media Types](https://www.iana.org/assignments/media-types/media-types.xhtml#image)"""
+scalar MimeType
+
+"""A URL"""
+scalar URL
+

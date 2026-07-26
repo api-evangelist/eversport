@@ -1,20 +1,80 @@
 aid: eversport
-name: Eversport
-description: Eversport is a company surfaced as a portfolio company of techstars and added to the API
-  Evangelist network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/eversport.png
+name: Eversports
+description: >-
+  Eversports is a European sports and fitness activity platform founded in 2013
+  and headquartered in Vienna, Austria. Its consumer marketplace lets people
+  discover, book, and pay for classes, courts, and memberships across yoga,
+  pilates, tennis, badminton, climbing and more, while Eversports Manager is the
+  studio-management SaaS that venues use to run schedules, bookings, memberships,
+  and payments. The platform facilitates roughly 1.5 million bookings per month
+  for more than 4,000 active sport providers and 500,000 monthly active users.
+  For developers, Eversports exposes a read-only GraphQL Provider API surfacing
+  activity schedules, venues, teachers, and per-activity checkout links for
+  integrated Eversports Manager venues, plus a legacy JSON:API REST integration
+  API for users, venues, courts, and orders, and aggregator integrations with
+  Urban Sports Club, Wellhub, ClassPass, EGYM Wellpass, and others.
 url: https://raw.githubusercontent.com/api-evangelist/eversport/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
 x-backed-by:
 - techstars
-x-tier: stub
-x-tier-reason: portfolio-lead
+x-tier: profile
+x-tier-reason: enriched-real-api
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-19'
 tags:
 - Company
-apis: []
+- Sports
+- Fitness
+- Booking
+- Scheduling
+- Wellness
+- Marketplace
+- GraphQL
+- Reservations
+- Studio Management
+- Events
+apis:
+- name: Eversports Provider API
+  description: >-
+    Read-only GraphQL API exposing activity schedules (classes, courses,
+    workshops, trainings, events, camps, retreats, educations), activity groups,
+    venues, companies, teachers, and per-activity checkout links for integrated
+    Eversports Manager venues. Uses Relay-style cursor pagination. Access
+    requires provider credentials issued by Eversports (contact
+    support@eversports.com); pricing starts at EUR 50 per month per location.
+  humanURL: https://helpcenter.eversportsmanager.com/what-is-the-provider-api
+  baseURL: https://provider-api.eversportsmanager.io/api/graphql
+  properties:
+  - type: GraphQL
+    url: graphql/eversport-provider-api.graphql
+  - type: APIReference
+    url: https://provider-api.eversportsmanager.io/api/graphql
+  - type: Documentation
+    url: https://helpcenter.eversportsmanager.com/what-is-the-provider-api
+- name: Eversports Integration API (v2)
+  description: >-
+    Legacy JSON:API REST integration API used by aggregator and partner systems
+    to manage users, venues, courts, and orders on the Eversports platform.
+    Requests and responses follow the jsonapi.org format with the
+    application/vnd.api+json media type; external systems use client-side IDs and
+    PUT for order upserts.
+  humanURL: https://gist.github.com/thomasfr/e236f256a29f748b7956
+  baseURL: https://api.eversport.at/v2
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -22,4 +82,45 @@ maintainers:
   email: info@apis.io
 common:
 - type: Website
-  url: https://eversport.at/
+  url: https://www.eversports.com/
+- type: DeveloperPortal
+  url: https://helpcenter.eversportsmanager.com/what-is-the-provider-api
+- type: Documentation
+  url: https://helpcenter.eversportsmanager.com/what-is-the-provider-api
+- type: APIReference
+  url: https://provider-api.eversportsmanager.io/api/graphql
+- type: HelpCenter
+  url: https://helpcenter.eversportsmanager.com/
+- type: Support
+  url: mailto:support@eversports.com
+- type: Pricing
+  url: https://helpcenter.eversportsmanager.com/what-is-the-provider-api
+- type: GitHubOrganization
+  url: https://github.com/eversport
+- type: GraphQL
+  url: graphql/eversport-provider-api.graphql
+- type: Authentication
+  url: authentication/eversport-authentication.yml
+- type: Conventions
+  url: conventions/eversport-conventions.yml
+- type: DataModel
+  url: data-model/eversport-data-model.yml
+- type: Conformance
+  url: conformance/eversport-conformance.yml
+- type: LLMsTxt
+  url: llms/eversport-llms.txt
+- type: WellKnown
+  url: well-known/eversport-well-known.yml
+- type: MCPServer
+  url: mcp/eversport-mcp.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Lifecycle
+  url: lifecycle/eversport-lifecycle.yml
+- type: DomainSecurity
+  url: security/eversport-domain-security.yml
+x-enrichment:
+  date: '2026-07-19'
+  status: backfilled
+  pass: local-v1
+  note: backfilled from .gitignore signal + verified work evidence
