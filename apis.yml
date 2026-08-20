@@ -47,6 +47,18 @@ tags:
 - GraphQL
 - Reservations
 - Studio Management
+- Event
+tags_raw:
+- Company
+- Sports
+- Fitness
+- Booking
+- Scheduling
+- Wellness
+- Marketplace
+- GraphQL
+- Reservations
+- Studio Management
 - Events
 apis:
 - name: Eversports Provider API
